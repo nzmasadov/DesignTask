@@ -11,6 +11,6 @@ import UIKit
 struct Message {
     var name: String?
     var image: UIImage?
-    var date: Date?
+    var date: String?
     var message: String?
 }

@@ -9,6 +9,10 @@ import UIKit
 
 class ChatScreenVC: UIViewController {
 
+    @IBOutlet weak var message1: UIView!
+    @IBOutlet weak var message2: UIView!
+    @IBOutlet weak var message3: UIView!
+    @IBOutlet weak var message4: UIView!
     @IBOutlet weak var userImageView: UIImageView!
     @IBOutlet weak var fullnameTextField: UILabel!
     @IBOutlet weak var messageTextField: UITextField!
@@ -24,12 +28,18 @@ class ChatScreenVC: UIViewController {
         fullnameTextField.text = username
         userImageView.image = userimage
         
-        userImageView.layer.cornerRadius = 31
+        userImageView.layer.cornerRadius = 28
         
         navigationController?.isNavigationBarHidden = true
         
         messageTextField.clipsToBounds = true
         messageTextField.layer.cornerRadius = 23
+        
+        
+        message1.layer.cornerRadius = 18
+        message2.layer.cornerRadius = 18
+        message3.layer.cornerRadius = 18
+        message4.layer.cornerRadius = 18
         
 //        let font = UIFont.systemFont(ofSize: 10) // <- make it larger, smaller, whatever you want.
 //        let config = UIImage.SymbolConfiguration(font: font)
