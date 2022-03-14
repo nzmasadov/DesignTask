@@ -30,7 +30,7 @@ class ChatScreenVC: UIViewController {
         
         userImageView.layer.cornerRadius = 28
         
-        navigationController?.isNavigationBarHidden = true
+       
         
         messageTextField.clipsToBounds = true
         messageTextField.layer.cornerRadius = 23
@@ -46,6 +46,12 @@ class ChatScreenVC: UIViewController {
 //        let image = UIImage(named: "arrow")
 //        backButtonOutlet.setImage(image, for: .normal)
         
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        navigationController?.isNavigationBarHidden = true
+        navigationItem.hidesBackButton = true
+        print("WillAppear")
     }
 
     @IBAction func backButtonPressed(_ sender: Any) {

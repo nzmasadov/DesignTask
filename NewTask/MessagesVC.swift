@@ -15,7 +15,6 @@ class MessagesVC: UIViewController, UISearchResultsUpdating, UISearchBarDelegate
     @IBOutlet weak var tableView: UITableView!
     let searchController = UISearchController()
     
-    var containText = String()
     
     var messageArray = [Message(name: "Johan Jacobs", image: UIImage(named: "person1"), date: "13.03.22", message: "Hi"),
                         Message(name: "Bruce Williams", image: UIImage(named: "person2"), date: "12.03.22", message: "Hello"),
@@ -25,11 +24,14 @@ class MessagesVC: UIViewController, UISearchResultsUpdating, UISearchBarDelegate
                         Message(name: "Hugh Jackson", image: UIImage(named: "person6"), date: "26.02.22", message: "Good night")
     ]
     
+    var filteredMessageArray = [Message]()
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-//            initSearchController()
+//        searchController.loadViewIfNeeded()
+//        searchController.obscuresBackgroundDuringPresentation = false
+//        definesPresentationContext = true
         
         searchController.searchResultsUpdater = self
         navigationItem.searchController = searchController
@@ -37,7 +39,6 @@ class MessagesVC: UIViewController, UISearchResultsUpdating, UISearchBarDelegate
         
         tableView.delegate = self
         tableView.dataSource = self
-
 
         let font = UIFont.systemFont(ofSize: 55) // <- make it larger, smaller, whatever you want.
         let config = UIImage.SymbolConfiguration(font: font)
@@ -49,25 +50,37 @@ class MessagesVC: UIViewController, UISearchResultsUpdating, UISearchBarDelegate
         navigationController?.isNavigationBarHidden = false
     }
     
-//    func initSearchController() {
-//        searchController.loadViewIfNeeded()
-//        searchController.searchResultsUpdater = self
-//        searchController.obscuresBackgroundDuringPresentation = false
-//        searchController.searchBar.enablesReturnKeyAutomatically = false
-//        searchController.searchBar.returnKeyType = UIReturnKeyType.done
-//        definesPresentationContext = true
-//        navigationItem.searchController = searchController
-//    }
-    
     
     @IBAction func plusButtonPressed(_ sender: Any) {
     }
     
     func updateSearchResults(for searchController: UISearchController) {
-        guard let text = searchController.searchBar.text else {return}
-        containText = text
-        print(text)
+        guard let searchText = searchController.searchBar.text else {return}
+        print(searchText)
+        
+        filterForSearchText(searchText: searchText)
     }
+    
+    func filterForSearchText(searchText: String)
+    {
+        filteredMessageArray = messageArray.filter
+        {
+            message in
+            
+            if(searchController.searchBar.text != "")
+            {
+                let searchTextMatch = message.name?.lowercased().contains(searchText.lowercased())
+                
+                return searchTextMatch ?? false
+            }
+            else
+            {
+                return (false)
+            }
+        }
+        tableView.reloadData()
+    }
+    
     
     @IBAction func logoutPressed(_ sender: Any) {
         do {
@@ -81,35 +94,35 @@ class MessagesVC: UIViewController, UISearchResultsUpdating, UISearchBarDelegate
 }
 
 
-
-
-
-
-
 extension MessagesVC: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        if(searchController.isActive)
+        {
+            return filteredMessageArray.count
+        }
         return messageArray.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "MessageViewCell", for: indexPath) as! MessageViewCell
-//        if (messageArray[indexPath.row].name?.contains(containText))! && containText == ""{
-        cell.imageViewUser.image = messageArray[indexPath.row].image
-        cell.fullnameUser.text = messageArray[indexPath.row].name
-        cell.messageLabel.text = messageArray[indexPath.row].message
-        cell.dateMessage.text = messageArray[indexPath.row].date
         
-//        let timeStamp = "\(DateFormatter.localizedString(from: Date(), dateStyle: .long, timeStyle: .long))"
-
-//        }else {
-//            print("not contain")
-//        }
-//
-//        DispatchQueue.main.async {
-//            tableView.reloadData()
+        let thisMessage: Message!
         
-//        }
+        if searchController.isActive
+        {
+            thisMessage = filteredMessageArray[indexPath.row]
+        }
+        else
+        {
+            thisMessage = messageArray[indexPath.row]
+        }
+        
+        cell.imageViewUser.image = thisMessage.image
+        cell.fullnameUser.text = thisMessage.name
+        cell.messageLabel.text = thisMessage.message
+        cell.dateMessage.text = thisMessage.date
         
         return cell
     }
@@ -118,6 +131,7 @@ extension MessagesVC: UITableViewDataSource, UITableViewDelegate {
         let chatVC = board.instantiateViewController(withIdentifier: "chatScreen") as! ChatScreenVC
         chatVC.username = messageArray[indexPath.row].name
         chatVC.userimage = messageArray[indexPath.row].image
+            
         navigationController?.pushViewController(chatVC, animated: true)
     }
 }
